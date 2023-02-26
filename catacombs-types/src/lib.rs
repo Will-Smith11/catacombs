@@ -1,11 +1,4 @@
-pub trait MpscChannel<S, R>
+pub trait Channel<S, R>
 {
     fn create_channel(buffer: usize) -> (S, R);
 }
-
-pub trait MpmcChannel<S, R>
-{
-    fn create_channel(buffer: usize) -> (S, R);
-}
-
-

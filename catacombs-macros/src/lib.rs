@@ -9,12 +9,12 @@ mod connections;
 ///
 /// The syntax for this is as follows:
 ///
-/// `name, data; channel_type, buffer_size; []`
+/// `data, channel_type, buffer_size`
 ///
 /// ```rust
 /// connections! {
-///     subscriptions, SubscriptionEnum; mpmc, 10;
-///     incoming_http, HttpRequestsStruct; mpsc, 5; (NoisyChannel, SillySender, RandomReceiver)
+///     SubscriptionEnum mpmc 10
+///     HttpRequestsStruct mpsc 5
 /// }
 /// ```
 ///The types of channels that are supported are:
@@ -33,16 +33,16 @@ pub fn connections(input: TokenStream) -> TokenStream
 /// The channel attribute is used to mark what channels we want to inject into
 /// the given struct. The syntax for this is as follows:
 /// ```rust
-/// #[channel(subscriptions_rx, incoming_http_tx)]
+/// #[channel(SubscriptionEnumRx, HTTPRequestsStructTx)]
 /// struct MyStruct {
 ///   send_msgs: u16,
 ///   ...
 /// }
 ///
 /// impl MyStruct {
-///     #[inject(subscriptions_tx, incoming_http_rx)]
 ///     pub fn new() -> Self {
-///         Self { send_msgs: 0 }
+///         let(sub_rx, http_tx) =Self::get_channels();
+///         Self { send_msgs: 0, subscription_enum_rx: sub_rx, http_requests_struct_tx: http_tx }
 ///     }
 ///
 ///     pub async fn process_sub_data(&mut self) {
@@ -68,45 +68,4 @@ pub fn connections(input: TokenStream) -> TokenStream
 pub fn channel(args: TokenStream, input: TokenStream) -> TokenStream
 {
     channels::parse_struct(args.into(), input.into()).into()
-}
-
-#[proc_macro_attribute]
-/// The channel attribute is used to mark what channels we want to inject into
-/// the given struct. The syntax for this is as follows:
-/// ```rust
-/// #[channel(subscriptions_rx, incoming_http_tx)]
-/// struct MyStruct {
-///   send_msgs: u16,
-///   ...
-/// }
-///
-/// impl MyStruct {
-///     #[inject(subscriptions_tx, incoming_http_rx)]
-///     pub fn new() -> Self {
-///         Self { send_msgs: 0 }
-///     }
-///
-///     pub async fn process_sub_data(&mut self) {
-///         if let Ok(message) = self.subscriptions_rx.recv().await {
-///             ...
-///         }
-///     }
-///
-///     pub async fn send_new_http(&mut self, request: HttpRequestsStruct) {
-///         self.incoming_http_tx.send(request).await.unwrap();
-///         self.send_msgs += 1;
-///     }
-/// }
-/// ```
-/// The channels the code is accessing above are the channels that were defined
-/// in the [`connections`] macro. Here is the example we generated from
-/// ```rust
-/// connections! {
-///     subscriptions, SubscriptionEnum; mpmc, 10;
-///     incoming_http, HttpRequestsStruct; mpsc, 5; NoisyChannel
-/// }
-/// ```
-pub fn inject(args: TokenStream, input: TokenStream) -> TokenStream
-{
-    channels::parse_inject(args.into(), input.into()).into()
 }
