@@ -5,6 +5,7 @@ use catacombs_macros::channel;
 //
 // }
 use catacombs_macros::connections;
+use once_cell::sync::Lazy;
 
 connections! {
     Test, mpsc, 10;
@@ -30,7 +31,4 @@ enum Test
 #[channel(TestTx, BallsRx)]
 struct ChannelTest {}
 
-fn main()
-{
-    init_catacomb();
-}
+fn main() {}

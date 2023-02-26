@@ -148,19 +148,14 @@ fn build_singleton(rows: &Vec<DataRow>) -> TokenStream
 
     quote!(
         pub static mut SINGLETON:
-            parking_lot::Mutex<Option<CatacombSingleton>> = parking_lot::Mutex::new(None);
+            once_cell::sync::Lazy<std::sync::Arc<parking_lot::Mutex<Option<CatacombSingleton>>>>
+                = once_cell::sync::Lazy::new(
+                    ||std::sync::Arc::new(parking_lot::Mutex::new(Some(CatacombSingleton::new()))));
 
-        pub fn init_catacomb()
+        pub fn get_catacomb() -> std::sync::Arc<parking_lot::Mutex<Option<CatacombSingleton>>>
         {
             unsafe {
-                SINGLETON = parking_lot::Mutex::new(Some(CatacombSingleton::new()));
-            }
-        }
-
-        pub fn get_catacomb() -> &'static CatacombSingleton
-        {
-            unsafe {
-                SINGLETON.lock().as_ref().unwrap()
+                SINGLETON.clone()
             }
         }
 
@@ -176,10 +171,10 @@ fn build_singleton(rows: &Vec<DataRow>) -> TokenStream
             }
 
             #(
-                pub fn #tx_name(&self) -> #tx{
+                pub fn #tx_name(&mut self) -> #tx{
                     self.#lowers.get_sender()
                 }
-                pub fn #rx_name(&self) -> #rx {
+                pub fn #rx_name(&mut self) -> #rx {
                     self.#lowers.get_receiver()
                 }
             )*

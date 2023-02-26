@@ -20,11 +20,11 @@ fn build_name(input: &Ident) -> Ident
     channel_type.truncate(channel_type.len() - 2);
     if is_tx(input)
     {
-        channel_type.push_str("_sender");
+        channel_type.push_str("_tx");
     }
     else
     {
-        channel_type.push_str("_receiver");
+        channel_type.push_str("_rx");
     }
     Ident::new(&channel_type, input.span())
 }
@@ -61,9 +61,10 @@ fn create_injetion_code(i_struct: &ItemStruct, channels: Vec<&Ident>) -> TokenSt
             pub fn get_channels() -> (#(#channels),*) {
                 // need to build singleton before we can go farther
                 let catacomb = get_catacomb();
+                let mut lock = catacomb.lock().as_mut().unwrap();
                 (
                     #(
-                        catacomb.#calls
+                        lock.#calls
                     ),*
                 )
             }
@@ -92,7 +93,6 @@ pub fn parse_struct(args: TokenStream, input: TokenStream) -> TokenStream
 
     quote! {
         #item_struct
-
         #injection_code
     }
 }
