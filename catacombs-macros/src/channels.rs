@@ -61,10 +61,12 @@ fn create_injetion_code(i_struct: &ItemStruct, channels: Vec<&Ident>) -> TokenSt
             pub fn get_channels() -> (#(#channels),*) {
                 // need to build singleton before we can go farther
                 let catacomb = get_catacomb();
-                let mut lock = catacomb.lock().as_mut().unwrap();
+                let mut lock = catacomb.lock();
+                let mut inner = lock.as_mut().unwrap();
+
                 (
                     #(
-                        lock.#calls
+                        inner.#calls
                     ),*
                 )
             }

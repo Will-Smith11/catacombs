@@ -13,8 +13,8 @@ mod connections;
 ///
 /// ```rust
 /// connections! {
-///     SubscriptionEnum mpmc 10
-///     HttpRequestsStruct mpsc 5
+///     SubscriptionEnum, mpmc, 10;
+///     HttpRequestsStruct, mpsc, 5;
 /// }
 /// ```
 ///The types of channels that are supported are:
@@ -41,7 +41,7 @@ pub fn connections(input: TokenStream) -> TokenStream
 ///
 /// impl MyStruct {
 ///     pub fn new() -> Self {
-///         let(sub_rx, http_tx) =Self::get_channels();
+///         let (sub_rx, http_tx) =Self::get_channels();
 ///         Self { send_msgs: 0, subscription_enum_rx: sub_rx, http_requests_struct_tx: http_tx }
 ///     }
 ///

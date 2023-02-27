@@ -5,7 +5,6 @@ use catacombs_macros::channel;
 //
 // }
 use catacombs_macros::connections;
-use once_cell::sync::Lazy;
 
 connections! {
     Test, mpsc, 10;
@@ -13,7 +12,7 @@ connections! {
 }
 
 #[derive(Debug, Clone)]
-enum Balls
+pub enum Balls
 {
     One,
     Two,
@@ -21,7 +20,7 @@ enum Balls
 }
 
 #[derive(Debug, Clone)]
-enum Test
+pub enum Test
 {
     One,
     Two,
