@@ -1,10 +1,4 @@
-use catacombs_macros::channel;
-// #[channel(ExampleTx, BallsRx)]
-// pub struct Test {
-//
-//
-// }
-use catacombs_macros::connections;
+use catacombs_macros::{channel, connections, inject};
 
 connections! {
     Test, mpsc, 10;
@@ -29,5 +23,14 @@ pub enum Test
 
 #[channel(TestTx, BallsRx)]
 struct ChannelTest {}
+
+impl ChannelTest
+{
+    #[inject]
+    pub fn new() -> Self
+    {
+        let (test_tx, balls_rx) = Self::get_channels();
+    }
+}
 
 fn main() {}
