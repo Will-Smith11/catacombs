@@ -1,0 +1,10 @@
+[package]
+name = "catacombs-common"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+syn = {version = "1.0.109", features = ["full", "extra-traits"] }
+proc-macro2 = "1.0.51"
+tokio = { version = "1.24.2", features = ["full"] }
+rayon = "1.5.1"

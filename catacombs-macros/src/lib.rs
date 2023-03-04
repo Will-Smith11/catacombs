@@ -69,3 +69,13 @@ pub fn channel(args: TokenStream, input: TokenStream) -> TokenStream
 {
     channels::parse_struct(args.into(), input.into()).into()
 }
+
+use quote::quote;
+
+#[proc_macro_attribute]
+/// The inject attribute is used to mark the injection function for the given
+/// struct.
+pub fn inject(_: TokenStream, _: TokenStream) -> TokenStream
+{
+    quote!().into()
+}

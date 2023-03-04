@@ -1,2 +1,2 @@
 [workspace]
-members = ["catacombs-macros", "catacombs-types", "example"]
+members = ["catacombs-macros", "catacombs-common", "example"]
